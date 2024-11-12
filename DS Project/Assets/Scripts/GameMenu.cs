@@ -12,7 +12,7 @@ public class GameMenu : MonoBehaviour
     public GameObject dressUp;
     public GameObject showcase;
 
-    //Updated so that all arrays are now circular linked lists with the current 
+    //Updated so that all arrays are now circular linked lists
     public List<GameObject> shirts;
     public List<GameObject> pants;
     public List<GameObject> hair;
@@ -21,6 +21,8 @@ public class GameMenu : MonoBehaviour
     public List<GameObject> glasses;
     public List<GameObject> pets;
     public List<Material> bgs;
+
+    public List<string> themes;
 
     private LinkedList<GameObject> shirtsLL;
     private LinkedList<GameObject> pantsLL;
@@ -31,6 +33,8 @@ public class GameMenu : MonoBehaviour
     private LinkedList<GameObject> petsLL;
     private LinkedList<Material> bgsLL;
 
+    private LinkedList<string> themesLL;
+
     private LinkedListNode<GameObject> currShirt;
     private LinkedListNode<GameObject> currPants;
     private LinkedListNode<GameObject> currHair;
@@ -40,10 +44,17 @@ public class GameMenu : MonoBehaviour
     private LinkedListNode<GameObject> currPet;
     private LinkedListNode<Material> currbg;
 
+    private LinkedListNode<string> currtheme;
+
     public AudioClip festiveBling;
     public TextMeshProUGUI playerText;
     public GameObject screenshotText;
     public TMP_InputField field;
+
+    public TMP_Text scoreText;
+
+    public TMP_Text themeText;
+    private int selection;
 
     public string player;
 
@@ -60,6 +71,8 @@ public class GameMenu : MonoBehaviour
         petsLL = new LinkedList<GameObject>(pets);
         bgsLL = new LinkedList<Material>(bgs);
 
+        themesLL = new LinkedList<string>(themes);
+
         currShirt = shirtsLL.First;
         currPants = pantsLL.First;
         currHair = hairLL.First;
@@ -68,6 +81,27 @@ public class GameMenu : MonoBehaviour
         currGlasses = glassesLL.First;
         currPet = petsLL.First;
         currbg = bgsLL.First;
+
+        currtheme = themesLL.First;
+
+        randomizeTheme();
+    }
+
+    void randomizeTheme()
+    {
+        selection = Random.Range(0, themes.Count);
+        LinkedListNode<string> node = themesLL.First;
+        for (int i = 0; i < selection; i++)
+        {
+            node = node.Next;
+        }
+        themeText.text = node.Value;
+    }
+
+    public void Score()
+    {
+        int i = Random.Range(0, 10000);
+        scoreText.text = "You scored: " + i + " points!";
     }
 
     //SCREEN MANAGEMENT--------------------------------------------------------------------
@@ -171,30 +205,6 @@ public class GameMenu : MonoBehaviour
         }
     }
 
-    /*public void BGSelectButton()
-    {
-        AudioSource audio = GetComponent<AudioSource>();
-        audio.clip = festiveBling;
-        audio.Play();
-        if (maxbgReached == true)
-        {
-            currbgOption = 0;
-            maxbgReached = false;
-        }
-
-        if (currbgOption < 6)
-        {
-            planeBG.gameObject.GetComponent<MeshRenderer>().material = bg[currbgOption];
-        }
-        currbgOption++;
-
-        if (currbgOption == 6)
-        {
-            planeBG.gameObject.GetComponent<MeshRenderer>().material = bg[6];
-            maxbgReached = true;
-        }
-    }*/
-
     //CYCLING CLOTHES--------------------------------------------------------------------
     void CycleThroughItems(ref LinkedListNode<GameObject> currentItem, LinkedList<GameObject> itemList)
     {
@@ -210,10 +220,12 @@ public class GameMenu : MonoBehaviour
         if (currentItem.Next != null)
         {
             currentItem = currentItem.Next;
+            currentItem.Value.SetActive(true);
         }
         else
         {
             currentItem = itemList.First;
+            currentItem.Value.SetActive(true);
         }
     }
 
